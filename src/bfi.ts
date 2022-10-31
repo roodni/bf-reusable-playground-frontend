@@ -1,4 +1,7 @@
 // 雑なbrainfuckインタプリタ
+// 私は今こんなものを書いている場合ではないのだ
+
+const tapeLen = 1000000;
 
 enum Cmd {
   Incr, Shift, Put, Get, While, Wend
@@ -109,7 +112,7 @@ class Runner {
     let ip = 0;
     let p = 0;
 
-    const tape = new Array(300000).fill(0);
+    const tape = new Array(tapeLen).fill(0);
     const getv = (p: number) => {
       return tape[p] ?? 0;
     };
@@ -122,8 +125,8 @@ class Runner {
     let output: number[] = [];
 
     const loop = () => {
-      loop:
-      for (let i = 0; i < 10000000; i++) {
+      floop:
+      for (let i = 0; i < 1000000; i++) {
         if (ip >= this.cmds.length) {
           this.state = RunnerState.Finished;
           break;
@@ -135,15 +138,16 @@ class Runner {
             break;
           case Cmd.Shift:
             p += this.params[ip];
-            if (p < 0) {
+            if (p < 0 || tapeLen <= p) {
               this.state = RunnerState.PointerOutOfRange;
-              break loop;
+              break floop;
             }
             break;
           case Cmd.Put:
             output.push(getv(p));
             if (output.length > 100) {
-              break loop;
+              ip++; // とても汚いバグ修正
+              break floop;
             }
             break;
           case Cmd.Get:
