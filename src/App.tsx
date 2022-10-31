@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Alert, Box, Button, Switch, Container, FormControlLabel,Grid, Link, MenuItem, Select, TextField, Typography } from '@mui/material';
 import samples from './samples';
+import { RunnerState, Runner } from './bfi';
 
 function App() {
   const [samplei, setSamplei] = useState(2);
@@ -10,7 +11,7 @@ function App() {
   const [bfreErrMsg, setBfreErrMsg] = useState('');
   const [bfcode, setBfcode] = useState('');
   const [stdin, setStdin] = useState('');
-  // const [stdout, setStdout] = useState('');
+  const [stdout, setStdout] = useState('');
 
   const putSample = (i: number) => {
     const s = samples[i];
@@ -20,6 +21,7 @@ function App() {
         setProgram(program);
         setBfcode('');
         setStdin(s.stdin);
+        setStdout('');
       });
     // 本当はfetchなんか使いたくないんだが、
     // create-react-appで作成したプロジェクトでは
@@ -77,6 +79,50 @@ function App() {
       .finally(() => {
         setApiWaiting(false);
       });
+  };
+
+  const [runnerErrMsg, setRunnerErrMsg] = useState('');
+  const [runningRunner, setRunningRunner] = useState<Runner | null>(null);
+
+  const bfRunHandler = () => {
+    if (runningRunner !== null) {
+      return;
+    }
+
+    setStdout('');
+    setRunnerErrMsg('');
+
+    let runner: Runner;
+    try {
+      let outstr = '';
+      runner = new Runner(bfcode, stdin, (output, state) => {
+        outstr += String.fromCodePoint(...output);
+        setStdout(outstr);
+        switch (state) {
+          case RunnerState.Finished:
+          case RunnerState.Stopped:
+            setRunningRunner(null);
+            break;
+          case RunnerState.PointerOutOfRange:
+            setRunnerErrMsg('ポインタが範囲外に移動した');
+            setRunningRunner(null);
+            break;
+          case RunnerState.Running:
+            // do nothing
+        }
+      });
+    } catch (e) {
+      setRunnerErrMsg(`括弧 [] の対応が取れていない`);
+      return;
+    }
+
+    setRunningRunner(runner);
+    runner.run();
+  };
+  const bfStopHandler = () => {
+    if (runningRunner !== null) {
+      runningRunner.stop();
+    }
   };
 
   return (
@@ -181,22 +227,36 @@ function App() {
           />
         </Grid>
         <Grid item xs={12}>
-          <Button variant='contained' size="large">実行</Button>
+          <Button
+            onClick={bfRunHandler}
+            disabled={bfcode === '' || runningRunner !== null}
+            variant="contained"
+            size="large"
+          >実行</Button>
+          <Button
+            onClick={bfStopHandler}
+            disabled={runningRunner === null}
+            variant='contained'
+            size="large"
+            color="error"
+            sx={{ marginX: 1 }}
+          >停止</Button>
         </Grid>
-        {/* <Grid item xs={12}>
-          <Alert severity="error">実行エラー</Alert>
-        </Grid> */}
+        { (runnerErrMsg !== '') &&
+          <Grid item xs={12}>
+            <Alert severity="error">{runnerErrMsg}</Alert>
+          </Grid>
+        }
         <Grid item xs={12} marginY={5}>
           標準出力:
           <TextField
             multiline
             minRows={5}
-            maxRows={25}
             fullWidth
+            value={stdout}
             InputProps={{
               sx: { fontFamily: 'Monospace', fontSize: 14, wordBreak: 'break-all' },
               spellCheck: false,
-              readOnly: true,
             }}
           />
         </Grid>
