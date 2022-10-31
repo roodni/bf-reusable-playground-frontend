@@ -1,0 +1,59 @@
+// Hello World!
+// 乗算で生成コード長を短縮するバージョン
+
+let fix f =
+  let g x = f (fun y -> x x y) in
+  g g
+
+let sqrt n =
+  fix
+    (fun bsearch l r ->
+      // [l, r)
+      let m = (l + r) / 2 in
+      if l + 1 < r then
+        if n < m * m
+          then bsearch l m
+          else bsearch m r
+      else m
+    ) 0 (n + 1)
+
+let abs n = if n < 0 then -n else n
+
+let gen_short_incr cel n =
+  if n = 0 then []
+  else
+    let a = sqrt (abs n) in
+    let b = n / a in
+    if a +abs b +abs (n -a*b) +10 < abs n then [
+      $alloc { tmp; } in
+      + tmp a
+      ! tmp [ - tmp  + cel b ]
+      + cel (n - a * b)
+    ] else [ + cel n ]
+
+let fold_left f a l =
+  fix
+    (fun fold a l ->
+      match l with
+      | () -> a
+      | hd . tl -> fold (f a hd) tl
+    ) a l
+
+let cat s1 s2 = [ *s1  *s2 ]
+
+let gen_puts str = [
+  $alloc { cel; } in
+  **let stmts, _ =
+      fold_left
+        (fun (stmts, prev) cha ->
+          let out = [
+            *gen_short_incr cel (cha - prev)
+            . cel
+          ] in
+          (cat stmts out, cha)
+        ) ([], 0) str
+    in
+    stmts
+]
+
+codegen [ *gen_puts "Hello World!\n" ]

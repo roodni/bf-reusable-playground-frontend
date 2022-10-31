@@ -1,0 +1,24 @@
+// 10進数を入力を受け取りセルに格納する
+
+let gen_repeat src st = [
+  ! src [ *st  - src ]
+]
+
+let gen_atoi dest sep = [
+  $alloc { tmp } in
+  , tmp
+  - tmp sep
+  ! tmp [
+    - tmp ('0' - sep)
+    *gen_repeat dest [ + tmp 10 ]
+    *gen_repeat tmp [ + dest ]
+    , tmp
+    - tmp sep
+  ]
+]
+
+codegen [
+  $build { n } in
+  *gen_atoi n '\n'
+  . n
+]
