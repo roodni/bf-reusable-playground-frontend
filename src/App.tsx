@@ -15,6 +15,7 @@ function App() {
 
   const putSample = (i: number) => {
     const s = samples[i];
+    // console.log(s.path);
     fetch(s.path)
       .then((res) => res.text())
       .then((program) => {
