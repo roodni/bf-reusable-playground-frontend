@@ -34,11 +34,16 @@ function App() {
   useEffect(() => { putSample(samplei) }, [samplei]);
 
   const codegenHandler = () => {
+    const url = process.env.REACT_APP_API_URL;
+    if (url === undefined) {
+      throw new Error('APIのURLが未指定');
+    }
+
     setBfreErrMsg('');
     setBfcode('');
     setApiWaiting(true);
 
-    fetch('http://localhost:3001/codegen', {
+    fetch(url, {
       method: 'POST',
       body: new URLSearchParams({
         'program': program,
