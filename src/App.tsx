@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Alert, Box, Button, Switch, Container, FormControlLabel,Grid, Link, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Switch, Container, FormControlLabel,Grid, Link, MenuItem, Select, TextField, Typography, SxProps } from '@mui/material';
 import samples from './samples';
 import { RunnerState, Runner } from './bfi';
 
@@ -131,6 +131,11 @@ function App() {
     }
   };
 
+  const textFieldStyle: SxProps = {
+    fontFamily: 'Courier, monospace',
+    fontSize: 14,
+    wordBreak: 'break-all',
+  };
   return (
     <Container maxWidth="lg">
       <Box marginY={2}>
@@ -171,7 +176,7 @@ function App() {
           value={program}
           onChange={(e) => { setProgram(e.target.value); }}
           InputProps={{
-            sx: { fontFamily: 'Monospace', fontSize: 14, wordBreak: 'break-all' },
+            sx: textFieldStyle,
             spellCheck: false
           }}
         />
@@ -212,7 +217,7 @@ function App() {
             onChange={(e) => { setBfcode(e.target.value); }}
             placeholder="ここにbrainfuckのコードが出る"
             InputProps={{
-                sx: { fontFamily: 'Monospace', fontSize: 14, wordBreak: 'break-all' },
+                sx: textFieldStyle,
                 spellCheck: false
             }}
           />
@@ -227,7 +232,7 @@ function App() {
             value={stdin}
             onChange={(e) => { setStdin(e.target.value); }}
             InputProps={{
-              sx: { fontFamily: 'Monospace', fontSize: 14, wordBreak: 'break-all' },
+              sx: textFieldStyle,
                spellCheck: false
             }}
           />
@@ -261,7 +266,7 @@ function App() {
             fullWidth
             value={stdout}
             InputProps={{
-              sx: { fontFamily: 'Monospace', fontSize: 14, wordBreak: 'break-all' },
+              sx: textFieldStyle,
               spellCheck: false,
             }}
           />
