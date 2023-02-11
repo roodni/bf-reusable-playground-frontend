@@ -1,0 +1,107 @@
+(* 自分自身を実行可能なbrainfuckインタプリタ
+   入力の形式:
+     {brainfuckのコード}\{入力}
+*)
+
+open import "std.bfr"
+
+codegen $
+
+// コード入力
+$build {
+  code: array(_) {
+    inst: cell;
+    depth: cell;
+    p: index;
+  }
+}
+
+$dive code@p [
+  **let p = code@p in $
+  $alloc {
+    cont; flag_next
+  }
+  + cont
+  ! cont [
+    , p:inst
+    + flag_next
+    *gen_switch p:inst
+      ( ('+', [ + p:inst 1 ]);
+        ('-', [ + p:inst 2 ]);
+        ('>', [ + p:inst 3 ]);
+        ('<', [ + p:inst 4 ]);
+        ('[', [
+          + p:inst 5
+          + p:(1)depth
+        ]);
+        (']', [
+          + p:inst 6
+          - p:depth
+        ]);
+        ('.', [ + p:inst 7 ]);
+        (',', [ + p:inst 8 ]);
+        ('\\', [
+          - flag_next
+          - cont
+        ]);
+      )
+      [ - flag_next ]
+    ! flag_next [
+      - flag_next
+      *gen_repeat_restore p:depth [ + p:(1)depth ]
+      > p
+    ]
+  ]
+]
+
+*gen_reset_index code@p
+
+// 実行
+$build {
+  tape: array(_) {
+    v: cell;
+    p: index;
+  }
+}
+
+**let p = code@p in $
+$dive p [
+  $alloc { depth_cur }
+  ! p:inst [
+    *gen_switch_nat p:inst
+      ( [];
+        [ + tape@p:v ];
+        [ - tape@p:v ];
+        [ > tape@p ];
+        [ < tape@p ];
+        [ // while
+          ? tape@p:v [] [
+            *gen_repeat_restore p:depth
+              [ + depth_cur  - p:(1)depth ]
+            > p
+            ! p:depth [
+              *gen_repeat_restore depth_cur
+                [ + p:depth  - p:(1)depth ]
+              > p
+            ]
+            *gen_repeat depth_cur [ + p:depth ]
+          ]
+        ];
+        [ // wend
+          *gen_repeat_restore p:depth
+            [ + depth_cur  - p:(-1)depth ]
+          < p
+          ! p:depth [
+            *gen_repeat_restore depth_cur
+              [ + p:depth  - p:(-1)depth ]
+            < p
+          ]
+          *gen_repeat depth_cur [ + p:depth ]
+          < p
+        ];
+        [ . tape@p:v ];
+      )
+      [ , tape@p:v ]
+    > p
+  ]
+]
