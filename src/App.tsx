@@ -4,7 +4,7 @@ import samples from './samples';
 import { RunnerState, Runner } from './bfi';
 
 function App() {
-  const [samplei, setSamplei] = useState(2);
+  const [samplei, setSamplei] = useState(1);
   const [program, setProgram] = useState('');
   const [showLayout, setShowLayout] = useState(false);
   const [apiWaiting, setApiWaiting] = useState(false);
@@ -50,6 +50,13 @@ function App() {
         'program': program,
         'show-layout': showLayout ? '1' : '0',
       }),
+      // headers: {
+      //   'Content-Type': 'application/json'
+      // },
+      // body: JSON.stringify({
+      //   'program': program,
+      //   'show-layout': showLayout ? '1' : '0',
+      // }),
     })
       .then((res) => {
         if (res.ok) {
@@ -139,7 +146,7 @@ function App() {
   return (
     <Container maxWidth="lg">
       <Box marginY={2}>
-        <Typography variant="h5" marginY={1}>The Bf-Reusable Language Playground</Typography>
+        <Typography variant="h5" marginY={1}>The bf-reusable Language Playground</Typography>
         <Typography variant="body1">
           <Link href="https://github.com/roodni/bf-reusable">bf-reusable</Link>
           は@rood_niがbrainfuckのコードを生成するために作った言語です。

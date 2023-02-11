@@ -1,10 +1,13 @@
 /* eslint import/no-webpack-loader-syntax: off */
-import atoi from './assets/atoi.bfr';
-import itoa from './assets/itoa.bfr';
+import geti from './assets/geti.bfr';
 import hello from './assets/hello.bfr';
 import hello2 from './assets/hello2.bfr';
 import fizzbuzz from './assets/fizzbuzz.bfr';
 import bfi from './assets/bfi.bfr';
+import std from './assets/lib/std.bfr';
+import future from './assets/lib/future.bfr';
+import counter from './assets/lib/counter.bfr';
+import fixedint from './assets/lib/fixedint.bfr';
 
 const samples: {
   name: string,
@@ -12,14 +15,9 @@ const samples: {
   stdin: string
 }[] = [
   {
-    name: '数値の入力',
-    path: atoi,
+    name: 'Decimal integer input',
+    path: geti,
     stdin: '65\n'
-  },
-  {
-    name: '数値の出力',
-    path: itoa,
-    stdin: 'A'
   },
   {
     name: 'Hello World!',
@@ -27,7 +25,7 @@ const samples: {
     stdin: ''
   },
   {
-    name: 'Hello World! (短い)',
+    name: 'Hello World! 2',
     path: hello2,
     stdin: ''
   },
@@ -37,7 +35,7 @@ const samples: {
     stdin: '15\n'
   },
   {
-    name: 'brainfuckインタプリタ',
+    name: 'brainfuck interpreter',
     path: bfi,
     stdin: `[ FizzBuzz ]
 [ Note:
@@ -47,6 +45,26 @@ HelloWorld on Interpreter on Interpereter -> OK
 ]
 >>>>,----------[-------------------------------------->>>[<<<++++++++++>>>-]<<<[>>>+<<<-],----------]<<<<+++>>>+++++>>>>[>>>>>>>>>[>>>>>>]+[>>+<[>-]>[-<++++++++++>>]<<->+<[>-<<[-<<<<<<]>>]>[-<++++++++++>>>>>+>>>]<<<][<<<<<<]<<<<<<++<<<<->+<[>->>>-<<<]>[-<+++>>>>>>>>>++++++++[-<++++++++>]<++++++.>+++++[-<+++++++>]<.+++++++++++++++++..[-]<<<<<<]>-<+>[<->>-<<]<[->+++++>>>>>>++++++++[-<++++++++>]<++.>+++++++[-<+++++++>]<++.+++++..[-]<<<<<<<]>>>>+<[>-]>[->>>>>>>>>>>[>>>>>>]>[<+>>>>>>>]<<<<<<[>>>>+++++++[-<++++++++>]<++<<<[>>>-<<<-]>>>.>+++++++[-<<<<++++++++>>>>]<<<<++>>>[<<<->>>-]<<<<-<<<<<]<[<<<<<<]<<<<]<<[-]>>>>+++++[-<<<<++++++>>>>]<<<<++.[-]>>>-]
 \\15\n`
+  },
+  {
+    name: 'Library: std.bfr',
+    path: std,
+    stdin: ''
+  },
+  {
+    name: 'Library: counter.bfr',
+    path: counter,
+    stdin: 'A\n'
+  },
+  {
+    name: 'Library: fixedint.bfr',
+    path: fixedint,
+    stdin: '-1234 5678\n'
+  },
+  {
+    name: 'Library: future.bfr',
+    path: future,
+    stdin: ''
   }
 ];
 

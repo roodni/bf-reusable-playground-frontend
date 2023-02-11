@@ -1,141 +1,28 @@
-// FizzBuzz
+open import "std.bfr"
+module Counter = import "counter.bfr"
 
-let fix f =
-  let g x = f (fun y -> x x y) in
-  g g
+codegen [
+  **Counter:gen_build @@ fun counter -> $
 
-
-let sqrt n =
-  fix
-    (fun bsearch l r ->
-      // [l, r)
-      let m = (l + r) / 2 in
-      if l + 1 < r then
-        if n < m * m
-          then bsearch l m
-          else bsearch m r
-      else m
-    ) 0 (n + 1)
-
-let abs n = if n < 0 then -n else n
-
-let gen_short_incr cel n =
-  if n = 0 then []
-  else
-    let a = sqrt (abs n) in
-    let b = n / a in
-    if a +abs b +abs (n -a*b) +10 < abs n then [
-      $alloc { tmp; } in
-      + tmp a
-      ! tmp [ - tmp  + cel b ]
-      + cel (n - a * b)
-    ] else [ + cel n ]
-
-let fold_left f a l =
-  fix
-    (fun fold a l ->
-      match l with
-      | () -> a
-      | hd . tl -> fold (f a hd) tl
-    ) a l
-
-let cat s1 s2 = [ *s1  *s2 ]
-
-let gen_puts str = [
-  $alloc { cel; } in
-  **let stmts, _ =
-      fold_left
-        (fun (stmts, prev) cha ->
-          let out = [
-            *gen_short_incr cel (cha - prev)
-            . cel
-          ] in
-          (cat stmts out, cha)
-        ) ([], 0) str
-    in
-    stmts
-]
-
-
-let gen_repeat src st = [
-  ! src [ *st  - src ]
-]
-
-let gen_reset_index i = [
-  $iloop i [ < i ]
-]
-
-
-let gen_atoi dest sep = [
-  $alloc { tmp } in
-  , tmp
-  - tmp sep
-  ! tmp [
-    - tmp ('0' - sep)
-    *gen_repeat dest [ + tmp 10 ]
-    *gen_repeat tmp [ + dest ]
-    , tmp
-    - tmp sep
-  ]
-]
-
-
-let gen_counter_build st = [
   $build {
-    counter: array(_) {
-      n: cell;
-      i: index;
-    };
-  } in
-  *st counter
-]
+    n: cell;
+    fizz: cell;
+    buzz: cell;
+  }
 
-let gen_counter_incr counter = [
-  **let i = counter@i in $
-  > i
-  $iloop i [
-    ? i:n [] [ + i:n 10 ]
-    - i:n
-    ? i:n
-      [ *gen_reset_index i ]
-      [ + i:n 10  > i ]
+  *gen_geti n '\n'
+  + fizz 3
+  + buzz 5
+  ! n [
+    - n
+    *Counter:gen_incr counter
+    $alloc { fb: cell; }
+    + fb 2
+    - fizz
+    ? fizz [ - fb ] [ + fizz 3  *gen_puts "Fizz" ]
+    - buzz
+    ? buzz [ - fb ] [ + buzz 5  *gen_puts "Buzz" ]
+    ? fb [] [ *Counter:gen_print counter ]
+    *gen_puts " "
   ]
-]
-
-let gen_counter_print counter = [
-  **let i = counter@i in $
-  ! i:(1)n [ > i ]
-  ! i:n [
-    $dive i [
-      $alloc {x} in
-      *gen_short_incr x ('9' + 1)
-      *gen_repeat i:n [ - x ]
-      . x
-      *gen_short_incr i:n ('9' + 1)
-      *gen_repeat x [ - i:n ]
-    ]
-    < i
-  ]
-]
-
-
-codegen $
-
-$build { n; fizz; buzz; } in
-**gen_counter_build @@ fun counter -> $
-
-*gen_atoi n '\n'
-+ fizz 3
-+ buzz 5
-
-*gen_repeat n [
-  *gen_counter_incr counter
-  $alloc { fb } in
-  + fb 2
-  - fizz
-  ? fizz [ - fb ] [ + fizz 3  *gen_puts "Fizz" ]
-  - buzz
-  ? buzz [ - fb ] [ + buzz 5  *gen_puts "Buzz" ]
-  ? fb [] [ *gen_counter_print counter ]
-  *gen_puts " "
 ]
