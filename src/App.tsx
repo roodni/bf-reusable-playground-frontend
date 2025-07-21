@@ -210,7 +210,8 @@ function App() {
             variant="contained"
             size="large"
             onClick={codegenHandler}
-            disabled={apiWaiting}
+            /* disabled={apiWaiting} */
+            disabled={true}
           >
             コード生成
           </Button>

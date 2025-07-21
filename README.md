@@ -1,3 +1,9 @@
+# OBSOLATED
+
+This repository is no longer maintained.
+
+See instead: https://github.com/roodni/reusable-bf-playground2
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
