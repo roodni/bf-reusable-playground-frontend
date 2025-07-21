@@ -146,10 +146,20 @@ function App() {
   return (
     <Container maxWidth="lg">
       <Box marginY={2}>
-        <Typography variant="h5" marginY={1}>The bf-reusable Language Playground</Typography>
+        <Typography variant="h5" marginY={1}>The reusable-bf Language Playground</Typography>
         <Typography variant="body1">
-          <Link href="https://github.com/roodni/bf-reusable">bf-reusable</Link>
+          <Link href="https://github.com/roodni/reusable-bf">reusable-bf</Link>
           は@rood_niがbrainfuckのコードを生成するために作った言語です。
+        </Typography>
+      </Box>
+
+      <Box marginY={2}>
+        <Typography variant="h4" color="red">
+          廃止 OBSOLATED
+        </Typography>
+        <Typography>
+          新しいPlaygroundが利用できます → <Link href="https://roodni.github.io/reusable-bf-playground2">https://roodni.github.io/reusable-bf-playground2</Link><br/>
+          このページはメンテナンスされていません。
         </Typography>
       </Box>
 
